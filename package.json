@@ -1,0 +1,18 @@
+{
+  "name": "gostack",
+  "version": "1.0.0",
+  "description": "Projeto Avaliativo Do GoStack",
+  "main": "index.js",
+  "repository": "https://github.com/eric-alves/routes-gostack-ex-01.git",
+  "author": "Eric dos Reis Alves <eralves01@hotmail.com>",
+  "license": "MIT",
+  "script": {
+    "dev": "nodemon index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

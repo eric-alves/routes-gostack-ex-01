@@ -1,8 +1,0 @@
-{
-  "name": "routes-gostack",
-  "version": "1.0.0",
-  "description": "Desafio0 01 do GoStack",
-  "main": "index.js",
-  "author": "Eric dos Reis Alves <eralves01@hotmail.com>",
-  "license": "MIT"
-}
