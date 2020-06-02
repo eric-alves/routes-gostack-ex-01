@@ -3,6 +3,8 @@ const express = require('express');
 const server = express();
 server.use(express.json());
 
+let num_req = 0;
+
 const projs = {
     projects: [
     {
@@ -22,13 +24,23 @@ const projs = {
     }
 ]}
 
-function findIndex(id){
+// Middlewares Global (chamado por todas as requisições)
+// Retorna o numero de requisições feitas até o momento
+server.use((req, res, next) => {
+    num_req++;
+    console.log("Numero de requisicoes = " + num_req);
+    return next();
+})
+// Middlewares Local 
+// Chamado apenas para as rotas que recebem o ID como parametro
+function checkId(req, res, next){
     for(let i = 0; i < projs.projects.length; i++){
-        if(projs.projects[i].id == id){
-            return i;
+        if(projs.projects[i].id == req.params.id){
+            req.indexId = i;
+            return next();
         }
     }
-    return -1;
+    return res.send("Projeto não encontrado.");
 }
 
 server.get('/', (req, res) => {
@@ -46,39 +58,21 @@ server.post('/projects', (req, res) => {
     res.json(projs);
 })
 
-server.put('/projects/:id', (req, res) => {
-    const {id} = req.params;
+server.put('/projects/:id', checkId, (req, res) => {
     const {title} = req.body;
-    let index = findIndex(id);
-    if(index >= 0){
-        projs.projects[index].title = title;
-        res.send(`Projeto Atualizado`);
-    } else{
-        res.send(`ID não Atualizado`);
-    }
+    projs.projects[req.indexId].title = title;
+    res.send(`Projeto Atualizado`);
 })
 
-server.post('/projects/:id/tasks', (req, res) => {
-    const {id} = req.params;
+server.post('/projects/:id/tasks', checkId, (req, res) => {
     const {title} = req.body;
-    let index = findIndex(id);
-    if(index >= 0){
-        projs.projects[index].tasks.push(title);
-        res.send(`Projeto Atualizado (Task)`);
-    } else{
-        res.send(`ID não Atualizado (Task)`);
-    }
+    projs.projects[req.indexId].tasks.push(title);
+    res.send(`Tsck Inserido ao Projeto`);    
 })
 
-server.delete('/projects/:id', (req, res) => {
-    const {id} = req.params;
-    let index = findIndex(id);
-    if(index >= 0){
-        projs.projects.splice(index, 1);
-        res.send(`Projeto Deletado`);
-    } else{
-        res.send(`ID não encontrado`);
-    }
+server.delete('/projects/:id', checkId, (req, res) => {
+    projs.projects.splice(req.indexId, 1);
+    res.json(projs);
 })
 
 server.listen(3000);
