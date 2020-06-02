@@ -8,12 +8,17 @@ const projs = {
     {
         id: "1",
         title: "Proj 01",
-        task: ["T 01", "T 02"]
+        tasks: ["T 01", "T 02"]
     },
     {
         id: "2",
         title: "Proj 02",
-        task: ["T 01"]
+        tasks: ["T 01"]
+    },
+    {
+        id: "3",
+        title: "Proj 03",
+        tasks: ["T 03"]
     }
 ]}
 
@@ -35,14 +40,39 @@ server.get('/projects', (req, res) => {
 })
 
 server.post('/projects', (req, res) => {
-    projs.push(req.body);
-    res.json(req.body);
+    const {id, title} = req.body;
+    const nproj = {id: id, title: title, tasks: []};
+    projs.projects.push(nproj);
+    res.json(projs);
+})
+
+server.put('/projects/:id', (req, res) => {
+    const {id} = req.params;
+    const {title} = req.body;
+    let index = findIndex(id);
+    if(index >= 0){
+        projs.projects[index].title = title;
+        res.send(`Projeto Atualizado`);
+    } else{
+        res.send(`ID não Atualizado`);
+    }
+})
+
+server.post('/projects/:id/tasks', (req, res) => {
+    const {id} = req.params;
+    const {title} = req.body;
+    let index = findIndex(id);
+    if(index >= 0){
+        projs.projects[index].tasks.push(title);
+        res.send(`Projeto Atualizado (Task)`);
+    } else{
+        res.send(`ID não Atualizado (Task)`);
+    }
 })
 
 server.delete('/projects/:id', (req, res) => {
     const {id} = req.params;
     let index = findIndex(id);
-    console.log(index);
     if(index >= 0){
         projs.projects.splice(index, 1);
         res.send(`Projeto Deletado`);
